@@ -118,6 +118,36 @@ cdef class Summary:
     def briefReport(self):
         return self._summary.BriefReport()
 
+cdef class EvaluateOptions:
+    cdef ceres.EvaluateOptions _options
+
+    def __cinit__(self):
+        pass
+
+    def __init__(self):
+        self._options = ceres.EvaluateOptions()
+
+    property residual_blocks:
+        def __get__(self):
+            blocks = []
+            cdef int i
+            for i in range(self._options.residual_blocks.size()):
+                block = ResidualBlockId()
+                block._block_id = self._options.residual_blocks[i]
+                blocks.append(block)
+            return blocks
+        def __set__(self, blocks):
+            self._options.residual_blocks.clear()
+            cdef ResidualBlockId block
+            for block in blocks:
+                self._options.residual_blocks.push_back(block._block_id)
+
+    property apply_loss_function:
+        def __get__(self):
+            return self._options.apply_loss_function
+        def __set__(self, value):
+            self._options.apply_loss_function = value
+
 cdef class SolverOptions:
     cdef ceres.SolverOptions* _options
 
@@ -164,10 +194,31 @@ cdef class Problem:
         cdef vector[double*] _parameter_blocks
         cdef double f
 
+        cdef ceres.ResidualBlockId _block_id
+
         for parameter_block in parameter_blocks:
             _tmp_array = np.ascontiguousarray(parameter_block, dtype=np.double)
             _parameter_blocks.push_back(<double*> _tmp_array.data)
-        self._problem.AddResidualBlock(cost_function._cost_function, loss_function._loss_function, _parameter_blocks)
+        _block_id = self._problem.AddResidualBlock(cost_function._cost_function,
+                                                   loss_function._loss_function,
+                                                   _parameter_blocks)
+        block_id = ResidualBlockId()
+        block_id._block_id = _block_id
+        return block_id
+
+    cpdef evaluate(self, residual_blocks, apply_loss_function=True):
+
+        cdef double cost
+
+        options = EvaluateOptions()
+        options.apply_loss_function = apply_loss_function
+        options.residual_blocks = residual_blocks
+
+        self._problem.Evaluate(options._options, &cost, NULL, NULL, NULL)
+        return cost
+
+cdef class ResidualBlockId:
+    cdef ceres.ResidualBlockId _block_id
 
 def solve(SolverOptions options, Problem problem, Summary summary):
     ceres.Solve(drf(options._options), &problem._problem, &summary._summary)

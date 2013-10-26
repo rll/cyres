@@ -1044,8 +1044,8 @@ cdef extern from "problem.h" namespace "ceres":
 
         void GetParameterBlocks(vector[double*]* parameter_blocks) const
 
-    bool Evaluate(const EvaluateOptions& options,
-                    double* cost,
-                    vector[double]* residuals,
-                    vector[double]* gradient,
-                    CRSMatrix* jacobian)
+        bool Evaluate(const EvaluateOptions& options,
+                        double* cost,
+                        vector[double]* residuals,
+                        vector[double]* gradient,
+                        CRSMatrix* jacobian)
