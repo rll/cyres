@@ -8,7 +8,6 @@ ceres_include = "/usr/local/include/ceres/"
 ceres_lib = "/usr/local/lib/"
 gflags_lib = "/usr/local/lib/"
 glog_lib = "/usr/local/lib/"
-protobuf_lib = "/usr/local/lib/"
 cholmod_lib = amd_lib = camd_lib = colamd_lib = "/usr/local/lib/"
 cxsparse_lib = "/usr/local/lib/"
 
@@ -18,8 +17,8 @@ ext_modules = [
         ["cyres/src/cyres.pyx", "cyres/src/cyres.pxd", "cyres/src/ceres.pxd"],
         language="c++",
         include_dirs=[ceres_include, numpy.get_include()],
-        libraries=['ceres', 'gflags', 'glog', "protobuf", "cholmod", "camd", "amd", "colamd", "cxsparse"],
-        library_dirs=[ceres_lib, gflags_lib, glog_lib, protobuf_lib, cholmod_lib, amd_lib, camd_lib, colamd_lib, cxsparse_lib],
+        libraries=['ceres', 'gflags', 'glog', "cholmod", "camd", "amd", "colamd", "cxsparse"],
+        library_dirs=[ceres_lib, gflags_lib, glog_lib, cholmod_lib, amd_lib, camd_lib, colamd_lib, cxsparse_lib],
         extra_compile_args=['-fopenmp'],
         extra_link_args=['-lgomp'],
     )
