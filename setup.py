@@ -19,7 +19,7 @@ ext_modules = [
         include_dirs=[ceres_include, numpy.get_include()],
         libraries=['ceres', 'gflags', 'glog', "cholmod", "camd", "amd", "colamd", "cxsparse"],
         library_dirs=[ceres_lib, gflags_lib, glog_lib, cholmod_lib, amd_lib, camd_lib, colamd_lib, cxsparse_lib],
-        extra_compile_args=['-fopenmp'],
+        extra_compile_args=['-fopenmp', '-O3'],
         extra_link_args=['-lgomp'],
     )
 ]
