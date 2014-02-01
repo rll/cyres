@@ -41,7 +41,7 @@ glog_lib = "/usr/local/lib/"
 cholmod_lib = amd_lib = camd_lib = colamd_lib = "/usr/local/lib/"
 cxsparse_lib = "/usr/local/lib/"
 
-extra_compile_args = []
+extra_compile_args = ['-O3']
 extra_link_args = []
 
 if has_openmp():
