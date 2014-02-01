@@ -1,11 +1,13 @@
 from distutils.core import setup
 from Cython.Distutils import build_ext
 from Cython.Distutils.extension import Extension
+import os
 import numpy
 import cyres
 
 ceres_include = "/usr/local/include/ceres/"
-eigen_include = "/usr/local/include/eigen3/"
+eigen_choices = ["/usr/local/include/eigen3", "/usr/include/eigen3"]
+eigen_include = [x for x in eigen_choices if os.path.exists(x)][0]
 
 ext_modules = [
     Extension(
@@ -14,7 +16,6 @@ ext_modules = [
         language="c++",
         include_dirs=[ceres_include, numpy.get_include(), eigen_include],
         cython_include_dirs=[cyres.get_cython_include()],
-        extra_objects=["cost_functions/cost_functions_impl.o"],
     )
 ]
 
