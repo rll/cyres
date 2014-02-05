@@ -404,8 +404,32 @@ cdef extern from "problem.h" namespace "ceres::internal":
         pass
 
 cdef extern from "loss_function.h" namespace "ceres":
+
     cdef cppclass LossFunction:
         void Evaluate(double sq_norm, double out[3]) const
+
+    cdef cppclass HuberLoss(LossFunction):
+        HuberLoss(double _a)
+
+    cdef cppclass SoftLOneLoss(LossFunction):
+        SoftLOneLoss(double _a)
+
+    cdef cppclass CauchyLoss(LossFunction):
+        CauchyLoss(double _a)
+
+    cdef cppclass ArctanLoss(LossFunction):
+        ArctanLoss(double _a)
+
+    cdef cppclass TolerantLoss(LossFunction):
+         TolerantLoss(double _a, double _b)
+
+    cdef cppclass ComposedLoss(LossFunction):
+        ComposedLoss(const LossFunction* f, Ownership ownership_f,
+                     const LossFunction* g, Ownership ownership_g)
+
+    cdef cppclass ScaledLoss(LossFunction):
+        ScaledLoss(const LossFunction* rho, double a, Ownership ownership)
+
 
 cdef extern from "cost_function.h" namespace "ceres":
     cdef cppclass CostFunction:

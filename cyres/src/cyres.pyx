@@ -108,9 +108,85 @@ cdef class CostFunction:
         else:
             return residuals
 
-cdef class SquaredLossFunction(LossFunction):
+cdef class SquaredLoss(LossFunction):
     def __cinit__(self):
         _loss_function = NULL
+
+cdef class HuberLoss(LossFunction):
+    def __init__(self, double _a):
+        self._loss_function = new ceres.HuberLoss(_a)
+
+cdef class SoftLOneLoss(LossFunction):
+    def __init__(self, double _a):
+        self._loss_function = new ceres.SoftLOneLoss(_a)
+
+cdef class CauchyLoss(LossFunction):
+    def __init__(self, double _a):
+        self._loss_function = new ceres.CauchyLoss(_a)
+
+cdef class ArctanLoss(LossFunction):
+    def __init__(self, double _a):
+        """
+        Loss that is capped beyond a certain level using the arc-tangent
+        function. The scaling parameter 'a' determines the level where falloff
+        occurs. For costs much smaller than 'a', the loss function is linear
+        and behaves like TrivialLoss, and for values much larger than 'a' the
+        value asymptotically approaches the constant value of a * PI / 2.
+
+          rho(s) = a atan(s / a).
+
+        At s = 0: rho = [0, 1, 0].
+        """
+        self._loss_function = new ceres.ArctanLoss(_a)
+
+cdef class TolerantLoss(LossFunction):
+    """
+    Loss function that maps to approximately zero cost in a range around the
+    origin, and reverts to linear in error (quadratic in cost) beyond this
+    range. The tolerance parameter 'a' sets the nominal point at which the
+    transition occurs, and the transition size parameter 'b' sets the nominal
+    distance over which most of the transition occurs. Both a and b must be
+    greater than zero, and typically b will be set to a fraction of a. The
+    slope rho'[s] varies smoothly from about 0 at s <= a - b to about 1 at s >=
+    a + b.
+
+    The term is computed as:
+
+      rho(s) = b log(1 + exp((s - a) / b)) - c0.
+
+    where c0 is chosen so that rho(0) == 0
+
+      c0 = b log(1 + exp(-a / b)
+
+    This has the following useful properties:
+
+      rho(s) == 0               for s = 0
+      rho'(s) ~= 0              for s << a - b
+      rho'(s) ~= 1              for s >> a + b
+      rho''(s) > 0              for all s
+
+    In addition, all derivatives are continuous, and the curvature is
+    concentrated in the range a - b to a + b.
+
+    At s = 0: rho = [0, ~0, ~0].
+    """
+    def __init__(self, double _a, double _b):
+        self._loss_function = new ceres.TolerantLoss(_a, _b)
+
+cdef class ComposedLoss(LossFunction):
+
+    def __init__(self, LossFunction f, LossFunction g):
+        self._loss_function = new ceres.ComposedLoss(f._loss_function,
+                                                     ceres.DO_NOT_TAKE_OWNERSHIP,
+                                                     g._loss_function,
+                                                     ceres.DO_NOT_TAKE_OWNERSHIP)
+
+cdef class ScaledLoss(LossFunction):
+
+    def __init__(self, LossFunction loss_function, double _a):
+        self._loss_function = new ceres.ScaledLoss(loss_function._loss_function,
+                                                   _a,
+                                                   ceres.DO_NOT_TAKE_OWNERSHIP)
 
 cdef class Summary:
     cdef ceres.Summary _summary
