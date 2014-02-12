@@ -271,6 +271,13 @@ cdef class SolverOptions:
         def __set__(self, value):
             self._options.dogleg_type = value
 
+    property preconditioner_type:
+        def __get__(self):
+            return self._options.preconditioner_type
+
+        def __set__(self, value):
+            self._options.preconditioner_type = value
+
     property num_threads:
         def __get__(self):
             return self._options.num_threads
