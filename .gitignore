@@ -39,3 +39,6 @@ nosetests.xml
 # Editors
 ~*
 *.swp
+
+# Example wrapper .cpp files
+examples/*/cost_functions/wrappers.cpp

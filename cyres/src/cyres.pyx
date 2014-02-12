@@ -194,6 +194,9 @@ cdef class Summary:
     def briefReport(self):
         return self._summary.BriefReport()
 
+    def fullReport(self):
+        return self._summary.FullReport()
+
 cdef class EvaluateOptions:
     cdef ceres.EvaluateOptions _options
 
@@ -253,6 +256,20 @@ cdef class SolverOptions:
 
         def __set__(self, value):
             self._options.linear_solver_type = value
+
+    property trust_region_strategy_type:
+        def __get__(self):
+            return self._options.trust_region_strategy_type
+
+        def __set__(self, value):
+            self._options.trust_region_strategy_type = value
+
+    property dogleg_type:
+        def __get__(self):
+            return self._options.dogleg_type
+
+        def __set__(self, value):
+            self._options.dogleg_type = value
 
     property num_threads:
         def __get__(self):
