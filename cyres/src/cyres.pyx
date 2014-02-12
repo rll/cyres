@@ -278,6 +278,13 @@ cdef class SolverOptions:
         def __set__(self, value):
             self._options.num_threads = value
 
+    property num_linear_solver_threads:
+        def __get__(self):
+            return self._options.num_linear_solver_threads
+
+        def __set__(self, value):
+            self._options.num_linear_solver_threads = value
+
 cdef class Problem:
     cdef ceres.Problem _problem
 
