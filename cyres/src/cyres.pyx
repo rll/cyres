@@ -292,6 +292,13 @@ cdef class SolverOptions:
         def __set__(self, value):
             self._options.num_linear_solver_threads = value
 
+    property use_nonmonotonic_steps:
+        def __get__(self):
+            return self._options.use_nonmonotonic_steps
+
+        def __set__(self, value):
+            self._options.use_nonmonotonic_steps = value
+
 cdef class Problem:
     cdef ceres.Problem _problem
 
