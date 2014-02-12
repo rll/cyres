@@ -338,6 +338,16 @@ cdef class Problem:
         self._problem.Evaluate(options._options, &cost, NULL, NULL, NULL)
         return cost
 
+    cpdef set_parameter_block_constant(self, block):
+        cdef np.ndarray _tmp_array = np.ascontiguousarray(block, dtype=np.double)
+        cdef double* _values = <double*> _tmp_array.data
+        self._problem.SetParameterBlockConstant(_values)
+
+    cpdef set_parameter_block_variable(self, block):
+        cdef np.ndarray _tmp_array = np.ascontiguousarray(block, dtype=np.double)
+        cdef double* _values = <double*> _tmp_array.data
+        self._problem.SetParameterBlockVariable(_values)
+
 cdef class ResidualBlockId:
     cdef ceres.ResidualBlockId _block_id
 
