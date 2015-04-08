@@ -3,8 +3,7 @@ from libcpp.vector cimport vector
 from libcpp.string cimport string
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
 
-cdef extern from "types.h" namespace "ceres":
-    ctypedef short int16
+cdef extern from "ceres/types.h" namespace "ceres":
     ctypedef int int32
     ctypedef enum Ownership:
         DO_NOT_TAKE_OWNERSHIP
@@ -278,12 +277,12 @@ cdef extern from "types.h" namespace "ceres":
         FORWARD
 
 
-cdef extern from "ordered_groups.h" namespace "ceres":
+cdef extern from "ceres/ordered_groups.h" namespace "ceres":
     cdef cppclass OrderedGroups[T]:
         pass
     ctypedef OrderedGroups[double*] ParameterBlockOrdering
 
-cdef extern from "iteration_callback.h" namespace "ceres":
+cdef extern from "ceres/iteration_callback.h" namespace "ceres":
     cdef struct IterationSummary:
         IterationSummary()
 
@@ -370,7 +369,7 @@ cdef extern from "iteration_callback.h" namespace "ceres":
     cdef cppclass IterationCallback:
         CallbackReturnType operator()(const IterationSummary& summary)
 
-cdef extern from "crs_matrix.h" namespace "ceres":
+cdef extern from "ceres/crs_matrix.h" namespace "ceres":
     ctypedef struct CRSMatrix:
         CRSMatrix()
 
@@ -381,7 +380,7 @@ cdef extern from "crs_matrix.h" namespace "ceres":
         vector[int] rows
         vector[double] values
 
-cdef extern from "local_parameterization.h" namespace "ceres":
+cdef extern from "ceres/local_parameterization.h" namespace "ceres":
     cdef cppclass LocalParameterization:
         bool Plus(const double* x,
                   const double* delta,
@@ -392,7 +391,7 @@ cdef extern from "local_parameterization.h" namespace "ceres":
 
         LocalSize() const
 
-cdef extern from "problem.h" namespace "ceres::internal":
+cdef extern from "ceres/problem.h" namespace "ceres::internal":
 
     cdef cppclass Preprocessor:
         pass
@@ -403,7 +402,7 @@ cdef extern from "problem.h" namespace "ceres::internal":
     cdef cppclass ResidualBlock:
         pass
 
-cdef extern from "loss_function.h" namespace "ceres":
+cdef extern from "ceres/loss_function.h" namespace "ceres":
 
     cdef cppclass LossFunction:
         void Evaluate(double sq_norm, double out[3]) const
@@ -431,17 +430,17 @@ cdef extern from "loss_function.h" namespace "ceres":
         ScaledLoss(const LossFunction* rho, double a, Ownership ownership)
 
 
-cdef extern from "cost_function.h" namespace "ceres":
+cdef extern from "ceres/cost_function.h" namespace "ceres":
     cdef cppclass CostFunction:
         bool Evaluate(double** parameters,
                       double* residuals,
                       double** jacobians) const
 
-        const vector[int16]& parameter_block_sizes() const
+        const vector[int32]& parameter_block_sizes() const
 
         int num_residuals() const
 
-cdef extern from "solver.h" namespace "ceres::Solver":
+cdef extern from "ceres/solver.h" namespace "ceres::Solver":
     cdef cppclass SolverOptions "ceres::Solver::Options":
         MinimizerType minimizer_type
 
@@ -956,13 +955,13 @@ cdef extern from "solver.h" namespace "ceres::Solver":
         vector[int] inner_iteration_ordering_given
         vector[int] inner_iteration_ordering_used
 
-cdef extern from "solver.h" namespace "ceres":
+cdef extern from "ceres/solver.h" namespace "ceres":
 
     void Solve(const SolverOptions& options,
                 Problem* problem,
                 Summary* summary)
 
-cdef extern from "problem.h" namespace "ceres::Problem":
+cdef extern from "ceres/problem.h" namespace "ceres::Problem":
 
     ctypedef ResidualBlock* ResidualBlockId
 
@@ -982,7 +981,7 @@ cdef extern from "problem.h" namespace "ceres::Problem":
         bool apply_loss_function
         int num_threads
 
-cdef extern from "problem.h" namespace "ceres":
+cdef extern from "ceres/problem.h" namespace "ceres":
 
     ctypedef ResidualBlock* ResidualBlockId
 
